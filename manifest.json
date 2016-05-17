@@ -1,0 +1,9 @@
+{
+    "name": "Navigator tooltips",
+    "version": "0.0.1",
+    "author": "Andy Orahoske",
+    "license": "MIT",
+    "dependencies": {
+        "highcharts": "4.2.3"
+    }
+}
