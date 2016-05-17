@@ -1,9 +1,22 @@
 {
-    "name": "Navigator tooltips",
-    "version": "0.0.1",
-    "author": "Andy Orahoske",
-    "license": "MIT",
-    "dependencies": {
-        "highcharts": "4.2.3"
+  "title": "Navigator tooltips",
+  "name": "Navigator tooltips",
+  "version": "0.0.1",
+  "author": {
+    "name": "Andy Orahoske",
+    "url": "http://andyorahoske.com"
+  },
+  "licenses": [
+    {
+      "type": "The MIT License (MIT)",
+      "url": "https://opensource.org/licenses/MIT"
     }
+  ],
+  "dependencies": {
+    "highcharts": "4.2.3"
+  },
+  "bugs": "https://github.com/AO16/highcharts-navigator-tooltip/issues",
+  "homepage": "https://github.com/AO16/highcharts-navigator-tooltip",
+  "docs": "https://github.com/AO16/highcharts-navigator-tooltip",
+  "download": "https://github.com/AO16/highcharts-navigator-tooltip/archive/master.zip"
 }
