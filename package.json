@@ -1,0 +1,24 @@
+{
+  "name": "highcharts-navigator-tooltip",
+  "version": "0.0.1",
+  "description": "Tooltips for the navigator in highcharts.",
+  "dependencies": {
+    "babel-eslint": "^6.0.4",
+    "eslint": "^2.10.2",
+    "eslint-config-zipscene": "^0.1.8"
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AO16/highcharts-navigator-tooltip.git"
+  },
+  "keywords": [
+    "highcharts",
+    "highstocks"
+  ],
+  "author": "Andy Orahoske",
+  "bugs": {
+    "url": "https://github.com/AO16/highcharts-navigator-tooltip/issues"
+  },
+  "homepage": "https://github.com/AO16/highcharts-navigator-tooltip"
+}
