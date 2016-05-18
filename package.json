@@ -2,6 +2,7 @@
   "name": "highcharts-navigator-tooltip",
   "version": "0.0.1",
   "description": "Tooltips for the navigator in highcharts.",
+  "main": "navigator-tooltip.js",
   "dependencies": {
     "babel-eslint": "^6.0.4",
     "eslint": "^2.10.2",
