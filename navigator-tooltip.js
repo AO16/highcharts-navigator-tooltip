@@ -1,4 +1,3 @@
-
 (function() {
   Highcharts.wrap(Highcharts.Scroller.prototype, 'render', function(proceed, min, max, pxMin, pxMax) {
     proceed.call(this, min, max, pxMin, pxMax);
