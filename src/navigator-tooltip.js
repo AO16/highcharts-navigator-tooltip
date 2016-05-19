@@ -1,61 +1,68 @@
-(function() {
-  Highcharts.wrap(Highcharts.Scroller.prototype, 'render', function(proceed, min, max, pxMin, pxMax) {
-    proceed.call(this, min, max, pxMin, pxMax);
+/* global window */
 
-    var formattedTooltipText;
-    var renderer = this.chart.renderer;
-    var tooltipFormatter = this.navigatorOptions.tooltipFormatter;
-    var tooltipPadding = 5;
+const { Highcharts: { Scroller, wrap } } = window;
+
+(function() {
+  wrap(Scroller.prototype, 'render', function(proceed, min, max, pxMin, pxMax) {
+    const [, ...args] = arguments;
+    proceed.call(this, ...args);
+
+    const { chart: { renderer }, navigatorOptions: { tooltipFormatter } } = this;
+    const tooltipPadding = 5;
 
     if (!tooltipFormatter) return;
+    const range = this.xAxis.toFixedRange(this.zoomedMin, this.zoomedMax);
+    const formattedTooltipText = tooltipFormatter(range.min, range.max, pxMin, pxMax);
 
-		var range = this.xAxis.toFixedRange(this.zoomedMin, this.zoomedMax);
-    formattedTooltipText = tooltipFormatter(range.min, range.max, pxMin, pxMax);
-
-    var renderTooltip = function(side, str) {
-      this[side + 'Tooltip'] = renderer.rect(0, 0, 0, 0, 3, 2).addClass('fade-out').add(this.navigatorGroup);
-      this[side + 'TooltipText'] = renderer.text(str, 5, 15).addClass('fade-out').add(this.navigatorGroup);
-    }.bind(this);
+    const renderTooltip = (side, str) => {
+      this[`${side}Tooltip`] = renderer.rect(0, 0, 0, 0, 3, 2).addClass('fade-out').add(this.navigatorGroup);
+      this[`${side}TooltipText`] = renderer.text(str, 5, 15).addClass('fade-out').add(this.navigatorGroup);
+    };
 
     if (!this.tooltipRendered) {
       renderTooltip('left', formattedTooltipText.min);
       renderTooltip('right', formattedTooltipText.max);
-      renderTooltip('center', formattedTooltipText.min + ' - ' + formattedTooltipText.max);
-      this.tooltipArrow = renderer.path(['M', 0, 0, 'H', 10, 'L', 5, 5, 'L', 0, 0]).addClass('fade-out').add(this.navigatorGroup);
+      renderTooltip('center', `${formattedTooltipText.min} - ${formattedTooltipText.max}`);
+      this.tooltipArrow = renderer.path([
+        'M', 0, 0,
+        'H', 10,
+        'L', 5, 5,
+        'L', 0, 0
+      ]).addClass('fade-out').add(this.navigatorGroup);
       this.tooltipRendered = true;
     }
 
     if (!formattedTooltipText.min) return;
 
-    var fadeInTooltip = function(side) {
-      var tooltip = this[side + 'Tooltip'];
-      var text = this[side + 'TooltipText'];
+    const fadeInTooltip = (side) => {
+      const tooltip = this[`${side}Tooltip`];
+      const text = this[`${side}TooltipText`];
       tooltip.attr('class', 'fade-in');
       text.attr('class', 'fade-in');
       this.tooltipArrow.attr('class', 'fade-in');
-    }.bind(this);
+    };
 
-    var fadeOutTooltip = function(side) {
-      var tooltip = this[side + 'Tooltip'];
-      var text = this[side + 'TooltipText'];
+    const fadeOutTooltip = function(side) {
+      const tooltip = this[`${side}Tooltip`];
+      const text = this[`${side}TooltipText`];
       tooltip.attr('class', 'fade-out');
       text.attr('class', 'fade-out');
       this.tooltipArrow.attr('class', 'fade-out');
     }.bind(this);
 
-    var findPosition = function(side, width) {
-      var handleIndex = { left: 0, right: 1, center: 0 };
-      var handle = this.handles[handleIndex[side]];
-      var offset = ((width + tooltipPadding)/2);
-      var x = handle.translateX - offset;
-      var arrow = {
+    const findPosition = function(side, width) {
+      const handleIndex = { left: 0, right: 1, center: 0 };
+      const handle = this.handles[handleIndex[side]];
+      const offset = ((width + tooltipPadding) / 2);
+      let x = handle.translateX - offset;
+      const arrow = {
         x: handle.translateX - 5,
         y: handle.translateY - 15
       };
 
       if (side === 'center') {
-        x = handle.translateX + ((this.fixedWidth - width)/2);
-        arrow.x = x + (width/2) - 5;
+        x = handle.translateX + ((this.fixedWidth - width) / 2);
+        arrow.x = x + (width / 2) - 5;
       }
 
       if (x + width > this.scrollerWidth) {
@@ -68,20 +75,16 @@
         arrow.x = x;
       }
 
-      return {
-        x: x,
-        y: handle.translateY - 20,
-        arrow: arrow
-      };
+      return { x, y: handle.translateY - 20, arrow };
     }.bind(this);
 
-    var adjustTooltip = function(side, str) {
-      var tooltip = this[side + 'Tooltip'];
-      var text = this[side + 'TooltipText'];
-      var textWidth = text.element.clientWidth;
-      var textHeight = text.element.clientHeight;
-      var pos = findPosition(side, textWidth);
-      var arrow = this.tooltipArrow;
+    const adjustTooltip = function(side, str) {
+      const tooltip = this[`${side}Tooltip`];
+      const text = this[`${side}TooltipText`];
+      const textWidth = text.element.clientWidth;
+      const textHeight = text.element.clientHeight;
+      const pos = findPosition(side, textWidth);
+      const arrow = this.tooltipArrow;
 
       tooltip.attr({
         width: textWidth + tooltipPadding,
@@ -93,12 +96,17 @@
 
       text.attr({
         text: str,
-        x: pos.x + (tooltipPadding/2),
+        x: pos.x + (tooltipPadding / 2),
         y: pos.y
       });
 
       arrow.attr({
-        d: ['M', pos.arrow.x, pos.arrow.y, 'H', pos.arrow.x + 10, 'L', pos.arrow.x + 5, pos.arrow.y + 5, 'L', pos.arrow.x, pos.arrow.y],
+        d: [
+          'M', pos.arrow.x, pos.arrow.y,
+          'H', pos.arrow.x + 10,
+          'L', pos.arrow.x + 5, pos.arrow.y + 5,
+          'L', pos.arrow.x, pos.arrow.y
+        ],
         fill: '#f1eeef'
       });
     }.bind(this);
@@ -121,7 +129,7 @@
 
     if (this.grabbedCenter) {
       fadeInTooltip('center');
-      adjustTooltip('center', formattedTooltipText.min + ' - ' + formattedTooltipText.max);
+      adjustTooltip('center', `${formattedTooltipText.min} - ${formattedTooltipText.max}`);
       setTimeout(function() {
         fadeOutTooltip('center');
       }, 1000);
