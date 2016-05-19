@@ -1,0 +1,8 @@
+.highcharts-container rect, .highcharts-container text, .highcharts-container path {
+  transition: opacity 1s; }
+
+.highcharts-container .fade-in {
+  opacity: 1; }
+
+.highcharts-container .fade-out {
+  opacity: 0; }
