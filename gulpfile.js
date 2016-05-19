@@ -2,12 +2,11 @@
 //-----------------------------------------------
 var gulp = require('gulp');
 var babel = require('gulp-babel');
+var sass = require('gulp-sass');
 
 // Configuration
 //-----------------------------------------------
 var buildDir = 'dist';
-var buildFile = "navigator-tooltip.js";
-var buildDirFile = buildDir + '/' + buildFile;
 
 // Tasks
 //-----------------------------------------------
@@ -17,4 +16,9 @@ gulp.task('build', function () {
       presets: ['es2015']
     }))
     .pipe(gulp.dest(buildDir));
+
+  gulp.src('src/styles/*.sass')
+    .pipe(sass().on('error', sass.logError))
+    .pipe(gulp.dest(buildDir + '/styles'));
+
 });
