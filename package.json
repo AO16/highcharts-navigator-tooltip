@@ -1,18 +1,16 @@
 {
   "name": "highcharts-navigator-tooltip",
   "version": "0.0.1",
-  "description": "Tooltips for the navigator in highcharts.",
-  "main": "navigator-tooltip.js",
-  "dependencies": {
-    "babel-eslint": "^6.0.4",
-    "eslint": "^2.10.2",
-    "eslint-config-zipscene": "^0.1.8"
-  },
+  "description": "This is a plugin that adds tooltips to the navigator as a user drags. The navigator requires that you are using Highstock.",
+  "main": "dist/navigator-tooltip.js",
   "devDependencies": {
     "babel-preset-es2015": "^6.9.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
-    "gulp-sass": "^2.3.1"
+    "gulp-sass": "^2.3.1",
+    "babel-eslint": "^6.0.4",
+    "eslint": "^2.10.2",
+    "eslint-config-zipscene": "^0.1.8"
   },
   "repository": {
     "type": "git",
@@ -20,7 +18,9 @@
   },
   "keywords": [
     "highcharts",
-    "highstocks"
+    "highstocks",
+    "tooltip",
+    "navigator"
   ],
   "author": "Andy Orahoske",
   "bugs": {
