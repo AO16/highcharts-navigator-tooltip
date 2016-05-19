@@ -1,12 +1,27 @@
 const { Highcharts: { Scroller, wrap } } = window;
 
 (function() {
+  /**
+   * Render tooltip into navigatorGroup
+   *
+   * @name renderTooltip
+   * @param {String} position: position of tooltip [left, right, center]
+   * @param {String} str: string to initially display in tooltip
+   * @returns {undefined}
+   */
   Scroller.prototype.renderTooltip = function(position, str) {
     const { chart: { renderer } } = this;
     this[`${position}Tooltip`] = renderer.rect(0, 0, 0, 0, 3, 2).addClass('fade-out').add(this.navigatorGroup);
     this[`${position}TooltipText`] = renderer.text(str, 5, 15).addClass('fade-out').add(this.navigatorGroup);
   };
 
+  /**
+   * Fade in/out tooltip
+   *
+   * @name fade
+   * @param {String} direction: direction of fade [in, out]
+   * @returns {Function}
+   */
   const fade = (direction) => {
     return function(position) {
       const { [`${position}Tooltip`]: tooltip, [`${position}TooltipText`]: text } = this;
@@ -22,6 +37,21 @@ const { Highcharts: { Scroller, wrap } } = window;
   Scroller.prototype.fadeOutTooltip = fade('out');
 
   Scroller.prototype.tooltipPadding = 5;
+
+  /**
+   * Find the correct position for the tooltip and the tooltip's arrow
+   *
+   * @name findTooltipPosition
+   *
+   * @param {String} position: position of tooltip [left, right, center]
+   * @param {String} tooltipWidth
+   * @returns {Object}
+   *   @returns {Number} x
+   *   @returns {Number} y
+   *   @returns {Number} arrow
+   *     @returns {Number} x
+   *     @returns {Number} y
+   */
   Scroller.prototype.findTooltipPosition = function(position, tooltipWidth) {
     const { tooltipPadding, scrollerWidth, scrollerLeft, fixedContainerWidth } = this;
     const handleIndex = { left: 0, right: 1, center: 0 };
@@ -54,6 +84,15 @@ const { Highcharts: { Scroller, wrap } } = window;
   };
 
   Scroller.prototype.tooltipFill = '#f1eeef';
+
+  /**
+   * Adjust the position, width of the tooltip
+   *
+   * @name adjustTooltip
+   * @param {String} position: position of tooltip [left, right, center]
+   * @param {String} str: string to initially display in tooltip
+   * @returns {undefined}
+   */
   Scroller.prototype.adjustTooltip = function(position, str) {
     const { tooltipPadding, tooltipFill, [`${position}Tooltip`]: tooltip, [`${position}TooltipText`]: text } = this;
     const textWidth = text.element.clientWidth;
@@ -82,6 +121,17 @@ const { Highcharts: { Scroller, wrap } } = window;
     });
   };
 
+  /**
+   * Render the scroller as it changes through interaction
+   *
+   * @name render
+   * @param {Function} proceed: effectively `_super`
+   * @param {Number} min: min xAxis value of currently represented by the navigator
+   * @param {Number} max: max xAxis value of currently represented by the navigator
+   * @param {Number} pxMin: min pixel position of current navigator selection
+   * @param {Number} pxMax: max pixel position of current navigator selection
+   * @returns {undefined}
+   */
   wrap(Scroller.prototype, 'render', function(proceed, min, max, pxMin, pxMax) {
     const [, ...args] = arguments;
     proceed.call(this, ...args);
