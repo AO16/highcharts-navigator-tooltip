@@ -5,14 +5,15 @@ const { Highcharts: { Scroller, wrap } } = window;
    * Render tooltip into navigatorGroup
    *
    * @name renderTooltip
+   * @param {Scroller} scroller
    * @param {String} position: position of tooltip [left, right, center]
    * @param {String} str: string to initially display in tooltip
    * @returns {undefined}
    */
-  Scroller.prototype.renderTooltip = function(position, str) {
-    const { chart: { renderer } } = this;
-    this[`${position}Tooltip`] = renderer.rect(0, 0, 0, 0, 3, 2).addClass('fade-out').add(this.navigatorGroup);
-    this[`${position}TooltipText`] = renderer.text(str, 5, 15).addClass('fade-out').add(this.navigatorGroup);
+  const renderTooltip = function(scroller, position, str) {
+    const { chart: { renderer } } = scroller;
+    scroller[`${position}Tooltip`] = renderer.rect(0, 0, 0, 0, 3, 2).addClass('fade-out').add(this.navigatorGroup);
+    scroller[`${position}TooltipText`] = renderer.text(str, 5, 15).addClass('fade-out').add(this.navigatorGroup);
   };
 
   /**
@@ -23,26 +24,26 @@ const { Highcharts: { Scroller, wrap } } = window;
    * @returns {Function}
    */
   const fade = (direction) => {
-    return function(position) {
-      const { [`${position}Tooltip`]: tooltip, [`${position}TooltipText`]: text } = this;
+    return function(scroller, position) {
+      const { [`${position}Tooltip`]: tooltip, [`${position}TooltipText`]: text, tooltipArrow } = scroller;
       const fadeClass = `fade-${direction}`;
 
       tooltip.attr('class', fadeClass);
       text.attr('class', fadeClass);
-      this.tooltipArrow.attr('class', fadeClass);
+      tooltipArrow.attr('class', fadeClass);
     };
   };
 
-  Scroller.prototype.fadeInTooltip = fade('in');
-  Scroller.prototype.fadeOutTooltip = fade('out');
+  const fadeInTooltip = fade('in');
+  const fadeOutTooltip = fade('out');
 
-  Scroller.prototype.tooltipPadding = 5;
+  const tooltipPadding = 5;
 
   /**
    * Find the correct position for the tooltip and the tooltip's arrow
    *
    * @name findTooltipPosition
-   *
+   * @param {Scroller} scroller
    * @param {String} position: position of tooltip [left, right, center]
    * @param {String} tooltipWidth
    * @returns {Object}
@@ -52,10 +53,10 @@ const { Highcharts: { Scroller, wrap } } = window;
    *     @returns {Number} x
    *     @returns {Number} y
    */
-  Scroller.prototype.findTooltipPosition = function(position, tooltipWidth) {
-    const { tooltipPadding, scrollerWidth, scrollerLeft, fixedContainerWidth } = this;
+  const findTooltipPosition = function(scroller, position, tooltipWidth) {
+    const { scrollerWidth, scrollerLeft, fixedWidth } = scroller;
     const handleIndex = { left: 0, right: 1, center: 0 };
-    const handle = this.handles[handleIndex[position]];
+    const handle = scroller.handles[handleIndex[position]];
     const offset = ((tooltipWidth + tooltipPadding) / 2);
     let x = handle.translateX - offset;
     const arrow = {
@@ -64,7 +65,7 @@ const { Highcharts: { Scroller, wrap } } = window;
     };
 
     if (position === 'center') {
-      x = handle.translateX + ((fixedContainerWidth - tooltipWidth) / 2);
+      x = handle.translateX + ((fixedWidth - tooltipWidth) / 2);
       arrow.x = x + (tooltipWidth / 2) - 5;
     }
 
@@ -83,22 +84,21 @@ const { Highcharts: { Scroller, wrap } } = window;
     return { x, y: handle.translateY - 20, arrow };
   };
 
-  Scroller.prototype.tooltipFill = '#f1eeef';
+  const tooltipFill = '#f1eeef';
 
   /**
    * Adjust the position, width of the tooltip
    *
    * @name adjustTooltip
+   * @param {Scroller} scroller
    * @param {String} position: position of tooltip [left, right, center]
    * @param {String} str: string to initially display in tooltip
    * @returns {undefined}
    */
-  Scroller.prototype.adjustTooltip = function(position, str) {
-    const { tooltipPadding, tooltipFill, [`${position}Tooltip`]: tooltip, [`${position}TooltipText`]: text } = this;
-    const textWidth = text.element.clientWidth;
-    const textHeight = text.element.clientHeight;
-    const { x, y, arrow: { x: arrowX, y: arrowY } } = this.findPosition(position, textWidth);
-    const arrow = this.tooltipArrow;
+  const adjustTooltip = function(scroller, position, str) {
+    const { tooltipArrow: arrow, [`${position}Tooltip`]: tooltip, [`${position}TooltipText`]: text } = scroller;
+    const { clientWidth: textWidth, clientHeight: textHeight } = text.element;
+    const { x, y, arrow: { x: arrowX, y: arrowY } } = findTooltipPosition(scroller, position, textWidth);
 
     tooltip.attr({
       width: textWidth + tooltipPadding,
@@ -136,7 +136,7 @@ const { Highcharts: { Scroller, wrap } } = window;
     const [, ...args] = arguments;
     proceed.call(this, ...args);
 
-    const { chart: { renderer }, navigatorOptions: { tooltipFormatter }, renderTooltip } = this;
+    const { chart: { renderer }, navigatorOptions: { tooltipFormatter } } = this;
 
     if (!tooltipFormatter) return;
     const range = this.xAxis.toFixedRange(this.zoomedMin, this.zoomedMax);
@@ -144,9 +144,9 @@ const { Highcharts: { Scroller, wrap } } = window;
     formattedTooltipText.center = `${formattedTooltipText.left} - ${formattedTooltipText.right}`;
 
     if (!this.tooltipRendered) {
-      renderTooltip('left', formattedTooltipText.left);
-      renderTooltip('right', formattedTooltipText.right);
-      renderTooltip('center', formattedTooltipText.center);
+      renderTooltip(this, 'left', formattedTooltipText.left);
+      renderTooltip(this, 'right', formattedTooltipText.right);
+      renderTooltip(this, 'center', formattedTooltipText.center);
       this.tooltipArrow = renderer.path([
         'M', 0, 0,
         'H', 10,
@@ -162,10 +162,10 @@ const { Highcharts: { Scroller, wrap } } = window;
       const capitalizedPosition = position.charAt(0).toUpperCase() + position.slice(1);
       const grabbed = this[`grabbed${capitalizedPosition}`];
       if (grabbed) {
-        this.fadeInTooltip(position);
-        this.adjustTooltip(position, formattedTooltipText[position]);
+        fadeInTooltip(this, position);
+        adjustTooltip(this, position, formattedTooltipText[position]);
         setTimeout(() => {
-          this.fadeOutTooltip(position);
+          fadeOutTooltip(this, position);
         }, 1000);
       }
     });
