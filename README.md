@@ -1,5 +1,7 @@
 # Highcharts Navigator Tooltip
 
+This is a plugin that adds tooltips to the navigator as a user drags. The navigator requires that you are using Highstock.
+
 ## Prerequisites
 
 * [Gulp](http://gulpjs.com/)
