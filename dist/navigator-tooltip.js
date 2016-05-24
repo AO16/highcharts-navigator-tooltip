@@ -168,7 +168,16 @@ var wrap = _window$Highcharts.wrap;
 
 
     if (!tooltipFormatter) return;
-    var range = this.xAxis.toFixedRange(this.zoomedMin, this.zoomedMax);
+
+    var chart = this.chart;
+    var _chart$xAxis$ = chart.xAxis[0];
+    var dataMin = _chart$xAxis$.dataMin;
+    var dataMax = _chart$xAxis$.dataMax;
+
+    var diff = dataMax - dataMin;
+    var unit = diff / chart.xAxis[0].width;
+    var range = { min: dataMin + unit * this.zoomedMin, max: dataMin + unit * this.zoomedMax };
+
     var formattedTooltipText = tooltipFormatter(range.min, range.max, pxMin, pxMax);
     formattedTooltipText.center = formattedTooltipText.left + ' - ' + formattedTooltipText.right;
 
