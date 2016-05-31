@@ -10,16 +10,16 @@ This is a plugin that adds tooltips to the navigator as a user drags. The naviga
 
 ## Installation
 
-`npm install highcharts`
+`npm install highcharts`  
 `npm install highcharts-navigator-tooltip`
 
 ## Watch
 
-`gulp`
+`gulp watch:all`
 
 ## Building
 
-`gulp build`
+`gulp build:all`
 
 ## Example
 
