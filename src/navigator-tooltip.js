@@ -12,8 +12,8 @@ const { Highcharts: { Scroller, wrap } } = window;
    */
   const renderTooltip = function(scroller, position, str) {
     const { chart: { renderer } } = scroller;
-    scroller[`${position}Tooltip`] = renderer.rect(0, 0, 0, 0, 3, 2).addClass('fade-out').add(this.navigatorGroup);
-    scroller[`${position}TooltipText`] = renderer.text(str, 5, 15).addClass('fade-out').add(this.navigatorGroup);
+    scroller[`${position}Tooltip`] = renderer.rect(0, 0, 0, 0, 3, 2).addClass('fade-out').add(scroller.navigatorGroup);
+    scroller[`${position}TooltipText`] = renderer.text(str, 5, 15).addClass('fade-out').add(scroller.navigatorGroup);
   };
 
   /**
@@ -176,4 +176,5 @@ const { Highcharts: { Scroller, wrap } } = window;
       }
     });
   });
+
 }());
