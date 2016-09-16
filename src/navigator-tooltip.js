@@ -139,13 +139,7 @@ const { Highcharts: { Scroller, wrap } } = window;
     const { chart: { renderer }, navigatorOptions: { tooltipFormatter } } = this;
 
     if (!tooltipFormatter) return;
-
-    const { chart } = this;
-    const { dataMin, dataMax } = chart.xAxis[0];
-    const diff = dataMax - dataMin;
-    const unit = diff / chart.xAxis[0].width;
-    const range = { min: dataMin + (unit * this.zoomedMin), max: dataMin + (unit * this.zoomedMax) };
-
+    const range = this.xAxis.toFixedRange(this.zoomedMin, this.zoomedMax);
     const formattedTooltipText = tooltipFormatter(range.min, range.max, pxMin, pxMax);
     formattedTooltipText.center = `${formattedTooltipText.left} - ${formattedTooltipText.right}`;
 
