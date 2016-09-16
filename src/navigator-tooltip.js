@@ -170,9 +170,8 @@ const { Highcharts: { Scroller, wrap } } = window;
       if (grabbed) {
         fadeInTooltip(this, position);
         adjustTooltip(this, position, formattedTooltipText[position]);
-        setTimeout(() => {
-          fadeOutTooltip(this, position);
-        }, 1000);
+      } else {
+        fadeOutTooltip(this, position);
       }
     });
   });
