@@ -197,9 +197,8 @@ var wrap = _window$Highcharts.wrap;
       if (grabbed) {
         fadeInTooltip(_this, position);
         adjustTooltip(_this, position, formattedTooltipText[position]);
-        setTimeout(function () {
-          fadeOutTooltip(_this, position);
-        }, 1000);
+      } else {
+        fadeOutTooltip(_this, position);
       }
     });
   });
